@@ -19,10 +19,7 @@
 
 \tableofcontents
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 Aldor (www.aldor.org) is a programming language that has its origin in
 the computer algebra system AXIOM and is particularly tailored for
@@ -50,25 +47,9 @@ support for sending Aldor commands to a buffer with a running Aldor
 interpreter is nearly taken literally from Tobias. So acknowledgement
 goes to him. Thank you Tobias.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Usage}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Configuration files}\label{sec:ConfigurationFiles}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The [[aldor-mode]] can be used in the following way.
 Put the following lines into your [[.emacs]] file and store
@@ -93,75 +74,48 @@ Where for EMACS there is only one file [[.emacs]], XEMACS splits the
 initialisation into two parts which are usually stored under the
 [[.xemacs]] directory.
 
-
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<.emacs>>=
 <<init.el>>
 <<custom.el>>
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
-
-
+@
 
 The following code is just a sample of how one can load [[aldor-mode]]
-automatically when loading a [[.as]] file. 
+automatically when loading a [[.as]] file.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<init.el>>=
 (setq load-path (append '("~/pub/elisp") load-path))
 (require 'font-lock)
 (autoload 'aldor-mode "aldor" "Aldor Mode" t)
 (add-hook 'aldor-mode-hook
-	  '(lambda ()
-	     (font-lock-mode t)
+          '(lambda ()
+             (font-lock-mode t)
              (font-lock-fontify-buffer)))
-(setq auto-mode-alist 
+(setq auto-mode-alist
       (append '(("\\.as$" . aldor-mode)) auto-mode-alist))
 @
-%$
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
-
-
-
 
 Customisation of EMACS is done by customising variables and faces. In
 XEMACS one can change them via the Options menu entry.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<custom.el>>=
 <<custom-set-variables>>
 <<custom-set-faces>>
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
-
-
+@
 
 We switch on [[lazy-shot-mode]], because for big programs it will only
 fontlock the part of the file you actually see.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<custom-set-variables>>=
 (custom-set-variables
  '(column-number-mode t)
  '(line-number-mode t)
  '(lazy-shot-mode t nil (lazy-shot))
 )
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
 We don't use filladapt at the moment, since we don't write ++ and --
 comments.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<old-custom-set-variables>>=
 (custom-set-variables
  '(column-number-mode t)
@@ -169,59 +123,34 @@ comments.
  '(lazy-shot-mode t nil (lazy-shot))
  <<filladapt>>
 )
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Using [[filladapt]]}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 I find it convenient to use the package filladapt. This correctly
 formats lines with comment characters continued (M-q).
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<filladapt>>=
 '(filladapt-mode t t (filladapt))
 '(filladapt-mode-line-string " Fadap")
 <<filladapt-token-table>>
 <<filladapt-token-conversion-table>>
 <<filladapt-token-match-table>>
-@ 
+@
 
 To be honest, I cannot explain what the acutal entries mean, since I
 played around with them a long time ago, but for me they work and so I
 am to lazy to re-read the documentation of filladapt.
-%
+
 I think the most important thing is the regular expressions for
 [[aldor-comment]] and [[aldor-doc]] in the following table.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<filladapt-token-table>>=
 '(filladapt-token-table (quote (
     ("^" beginning-of-line)
     (">+" citation->)
-    ("[A-Za-z0-9][^'`\"< 	
-]*>[ 	]*" supercite-citation)
+    ("[A-Za-z0-9][^'`\"<
+]*>[    ]*" supercite-citation)
     ("[#%!;]*-+[a-z#%!;:]* " rhx-comment)
     ("-+ " aldor-comment)
     ("\\++ " aldor-doc)
@@ -229,25 +158,22 @@ I think the most important thing is the regular expressions for
     ("#+" sh-comment)
     ("%+" postscript-comment)
     ("///*" c++-comment)
-    ("@c[ 	]" texinfo-comment)
-    ("@comment[ 	]" texinfo-comment)
-    ("\\\\item[ 	]" bullet)
-    ("[0-9]+\\.[ 	]" bullet)
-    ("[0-9]+\\(\\.[0-9]+\\)+[ 	]" bullet)
-    ("[A-Za-z]\\.[ 	]" bullet)
-    ("(?[0-9]+)[ 	]" bullet)
-    ("(?[A-Za-z])[ 	]" bullet)
-    ("[0-9]+[A-Za-z]\\.[ 	]" bullet)
-    ("(?[0-9]+[A-Za-z])[ 	]" bullet)
-    ("[~*+]+[ 	]" bullet)
-    ("o[ 	]" bullet)
-    ("[ 	]+" space)
+    ("@c[       ]" texinfo-comment)
+    ("@comment[         ]" texinfo-comment)
+    ("\\\\item[         ]" bullet)
+    ("[0-9]+\\.[        ]" bullet)
+    ("[0-9]+\\(\\.[0-9]+\\)+[   ]" bullet)
+    ("[A-Za-z]\\.[      ]" bullet)
+    ("(?[0-9]+)[        ]" bullet)
+    ("(?[A-Za-z])[      ]" bullet)
+    ("[0-9]+[A-Za-z]\\.[        ]" bullet)
+    ("(?[0-9]+[A-Za-z])[        ]" bullet)
+    ("[~*+]+[   ]" bullet)
+    ("o[        ]" bullet)
+    ("[         ]+" space)
     ("$" end-of-line))))
-@ 
-%$
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<filladapt-token-conversion-table>>=
 '(filladapt-token-conversion-table (quote (
     (citation-> . exact)
@@ -263,11 +189,8 @@ I think the most important thing is the regular expressions for
     (bullet . spaces)
     (space . exact)
     (end-of-line . exact))))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<filladapt-token-match-table>>=
 '(filladapt-token-match-table (quote (
     (citation-> citation->)
@@ -283,49 +206,27 @@ I think the most important thing is the regular expressions for
     (bullet)
     (space bullet space)
     (beginning-of-line beginning-of-line))))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Customising [[font-lock]]}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 These are my personal settings. I like to have a dark background and
 white text. If you do not like it this way then change it.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<custom-set-faces>>=
 (custom-set-faces
   <<default-faces>>
   <<font-lock-faces for default>>
 )
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<default-faces>>=
 '(default ((t (:foreground "white" :background "#005"))) t)
 '(whitespace-blank-face ((t (:background "black"))))
 '(paren-match ((t (:foreground "black" :background "darkseagreen2"))) t)
 '(zmacs-region ((t (:background "black"))) t)
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<font-lock-faces for default>>=
 '(font-lock-string-face        ((t (:foreground "#a0a0ff"))))
 '(font-lock-reference-face     ((t (:foreground "red"))))
@@ -340,53 +241,19 @@ white text. If you do not like it this way then change it.
 ;'(aldor-font-lock-pretend-face ((t (:foreground "red"))))
 ;'(aldor-font-lock-assert-face  ((t (:foreground "red"))))
 ;'(aldor-font-lock-assert-argument-face  ((t (:foreground "yellow"))))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The [[aldor-mode]] Code}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 The code is split in mainly 3 sections
 \begin{itemize}
-\item Aldor loop code (mainly due to Tobias Beck),
-\item font-lock code for syntax highlighting,
-\item indentation support.
+  \item Aldor loop code (mainly due to Tobias Beck),
+  \item font-lock code for syntax highlighting,
+  \item indentation support.
 \end{itemize}
 
 Finally, the [[aldor-mode-setup]] puts it all together.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<*>>=
 <<Header>>
 (provide 'aldor)
@@ -396,17 +263,10 @@ Finally, the [[aldor-mode-setup]] puts it all together.
 <<Keyboard bindings>>
 <<Indentation support>>
 <<aldor-mode-setup>>
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
+Well, every file should have a header \ldots
 
-
-
-
-
-Well, every file should have a header...
-
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Header>>=
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; This file provides an Aldor mode for EMACS.
@@ -416,39 +276,14 @@ Well, every file should have a header...
 ;; http://www.hemmecke.de
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; Since the original file is written using a literate programming 
+;; Since the original file is written using a literate programming
 ;; style through the noweb facility of Norman Ramsey, documentation
 ;; of the code can be found in aldor.el.nw.
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Sending Command String to an Aldor Process} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sending Command String to an Aldor Process}
 
 By means of the following code it is possible to start an interactive
 Aldor loop ([[aldor -gloop]]) by just pressing [[C-RET]] (control
@@ -461,28 +296,23 @@ this line and pressing [[S-RET]] (shift enter).
 This section describes only the actual code that does the job. The
 binding of the keys is described in Section~\ref{sec:KeyboardBinding}.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Aldor loop>>=
 <<Setup Aldor compiler and options>>
 <<Make [[aldor-loop]] an interactive command>>
 <<Provide elisp function to sent an Aldor command>>
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
 We first set up the path to the Aldor compiler. We assume here that
 the environment variable [[ALDORROOT]] is set to point to Aldor.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Setup Aldor compiler and options>>=
 (require 'comint)
 (defvar aldor-path (substitute-in-file-name "$ALDORROOT/bin/aldor"))
 (defvar aldor-loop-switch "-gloop")
-@ 
-%$
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
 Now we make [[aldor-loop]] available for the user.
-%
+
 The following code will be bound to [[C-RET]] (control enter) in
 Section~\ref{sec:KeyboardBinding}. So typing [[C-RET]] should switch
 to just another window (EMACS-speak) and display the interactive Aldor
@@ -490,7 +320,6 @@ loop there. If there is currently only one window, then it is split
 vertically (2 windows, one on top of the other) and the interactive
 Aldor loop is shown in one of them.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Make [[aldor-loop]] an interactive command>>=
 (defun aldor-loop ()
   "Run Aldor interpreter loop in a buffer."
@@ -498,11 +327,10 @@ Aldor loop is shown in one of them.
   (if (= (count-windows) 1)
       (split-window-vertically)
     (other-window 1))
-  (switch-to-buffer 
+  (switch-to-buffer
    (make-comint "Aldor" aldor-path nil aldor-loop-switch))
   (setq comint-prompt-regexp "^[^>]*[>]+ *"))
-@ %def aldor-loop
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
 Finally, we provide a command that sends one line from an
 [[aldor-mode]] buffer to the interactive Aldor process.
@@ -510,15 +338,14 @@ This code is almost taken literally from Tobias Beck.
 I have, however, changes some parts at the end so that the
 interactive Aldor window shows always the end of the buffer.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Provide elisp function to sent an Aldor command>>=
 (defun aldor-send-to-loop ()
   "Send one line of input to Aldor process."
   (interactive)
   (let* ((s (current-buffer))                  ; current buffer
-	 (bol (progn (beginning-of-line) (point)))
-	 (eol (progn (end-of-line) (point)))
-	 (cmd (buffer-substring bol eol)))     ; current line
+         (bol (progn (beginning-of-line) (point)))
+         (eol (progn (end-of-line) (point)))
+         (cmd (buffer-substring bol eol)))     ; current line
     ; forward cursor one line in this buffer
     (forward-line)
     ; copy line to Aldor buffer
@@ -530,30 +357,9 @@ interactive Aldor window shows always the end of the buffer.
     (comint-send-input)
     (goto-char (point-max))
     (set-window-point (get-buffer-window "*Aldor*") (point))))
-@ %def aldor-send-to-loop
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Syntax Table}\label{sec:SyntaxTable}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 We modify the syntax table specific for Aldor. Unfortunately it does
 not work to make [[++]] into a comment, so the [[+]] is not treated in
@@ -561,8 +367,6 @@ any special way but rather becomes a character like [[=]].
 
 In particular, we treat the underscore as an escape character.
 
-
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Syntax table>>=
 (defvar aldor-mode-syntax-table nil
   "Syntax table in use in aldor-mode buffers.")
@@ -594,37 +398,9 @@ In particular, we treat the underscore as an escape character.
     (modify-syntax-entry ?\] ")[  "  table)
     (modify-syntax-entry ?\) ")(  "  table)
     (setq aldor-mode-syntax-table table)))
-@ %def aldor-mode-syntax-table
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Syntax Highlighting} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Syntax Highlighting}
 
 Syntax highlighting is built on the standard EMACS [[font-lock]]
 package. We first provide a list that connects the Aldor keywords to
@@ -635,14 +411,11 @@ special things like [[throw]], [[pretend]], and [[assert]].
 For compatibility reasons between Emacs and XEmacs, we also introduce
 faces for [[++]] and Aldor compiler system commands like [[#if]].
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Syntax highlighting>>=
 <<aldor-font-lock-faces>>
 <<regular expression for a Aldor identifier (chars 2..n)>>
 <<font-lock-keywords>>
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
+@
 
 Before we are going to describe the actual font-lock keywords, let us
 provide some extra faces for Aldor.
@@ -656,7 +429,6 @@ or [[font-lock-doc-string-face]]. And the
 For some misterious reason in Emacs, we have to use the [[defvar]]
 expressions below. They are unnecessary in XEmacs, but do not hurt.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<aldor-font-lock-faces>>=
 (defface aldor-font-lock-throw-face
   '((((class color) (background dark)) (:foreground "red"))
@@ -721,29 +493,22 @@ expressions below. They are unnecessary in XEmacs, but do not hurt.
   'aldor-font-lock-preprocessor-face
   "Face for the Aldor #if, #assert, #else etc.")
 @
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
 
 For [[aldor-font-lock-keywords]] we often need to describe the
 characters of a Aldor identifier that can come after the first
 character. We put this regular expression here into an extra variable
 since we want to include the treatment of the underscore character.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<regular expression for a Aldor identifier (chars 2..n)>>=
 (defconst id-rest "\\(\\sw\\|_.\\)*")
 (defconst id-fun (concat "\\(\\<[a-z]" id-rest "\\>\\)"))
 (defconst id-dom (concat "\\(\\<[A-Z]" id-rest "\\>\\)"))
 @
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
 
 Now, let us describe the actual keywords that we use here.
-%
+
 We group them into several sections. Some Aldor keywords are treated
-in a particular way like, for example, 
+in a particular way like, for example,
 \begin{verbatim}
 import from D1, D2;
 \end{verbatim}
@@ -758,7 +523,6 @@ expression below for a description of these conventions.
 The order in the following list is important and cannot be changed
 arbitrarily.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<font-lock-keywords>>=
 (defconst aldor-font-lock-keywords
   (list
@@ -777,10 +541,7 @@ arbitrarily.
   )
   "Subdued level highlighting for Aldor modes."
 )
-@ %def aldor-font-lock-keywords
-
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
+@
 
 The general way to specify one of the following faces is
 \begin{verbatim}
@@ -790,14 +551,8 @@ where the regular expression should contain subexpressions embraced by
 [[\\(]] and [[\\)]]. The number then refers to this subexpression and
 the corresponding string is set in the font-lock face [[face]].
 
+\subsubsection{Documentation Comments}
 
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Documentation Comments} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 First of all comments starting with ++ and reaching to the end of the
 line are considered to be documentation and should appear in a
 documentation face.
@@ -806,28 +561,13 @@ We do not need to give code for ordinary [[--]] comments, since they
 are handled by default via our setting of the syntax table, see
 Section~\ref{sec:SyntaxTable}.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<[[++]] Documentation comments>>=
 '("\\([+][+].*\\)"
   (1 aldor-font-lock-doc-face t t))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
+\subsubsection{Aldor System Commands}
 
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Aldor System Commands} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The following code covers Aldor system commands like
 \begin{verbatim}
 #include "calix"
@@ -837,55 +577,37 @@ The following code covers Aldor system commands like
 \end{verbatim}
 
 The [[#]] sign should always appear in the first column.
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
 <<Aldor system commands>>=
 (list (concat "^\\(#\\)[ \t]*\\<\\("
         (mapconcat 'identity '(
-	   "include"
-	   "reinclude"
-	   "assert"
-	   "unassert"
-	   "if"
-	   "elseif"
-	   "else"
-	   "endif"
-	   "line"
-	   "error"
-;          "pile"    -- I don't like it.
-;	   "endpile" -- I don't like it.
-	   "library"
-	   "includeDir"
-	   "libraryDir"
-	   "int"
-	   "quit"
-	)  "\\|")
-	"\\)\\>[ \t]*\\(\\sw*\\)")
+           "include"
+           "reinclude"
+           "assert"
+           "unassert"
+           "if"
+           "elseif"
+           "else"
+           "endif"
+           "line"
+           "error"
+           "pile"
+           "endpile"
+           "library"
+           "includeDir"
+           "libraryDir"
+           "int"
+           "quit"
+        )  "\\|")
+        "\\)\\>[ \t]*\\(\\sw*\\)")
   '(1 aldor-font-lock-preprocessor-face)
   '(2 aldor-font-lock-preprocessor-face)
   '(3 font-lock-variable-name-face)
 )
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
+\subsubsection{Statments involving [[from]] and [[to]]}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Statments involving [[from]] and [[to]]} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The code covers statements like
 \begin{verbatim}
 ... from xxx,yyy;
@@ -899,146 +621,69 @@ Before [[from]] and [[to]] might appear [[import]], [[inline]], and
 These other keywords are highlighted by including them in the list of
 remaining Aldor keywords, see below.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<from and to statements>>=
 '("\\(\\<from\\|to\\>\\)[ \t]+\\([^;]*\\);"
   (1 font-lock-keyword-face)
   (2 font-lock-variable-name-face))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
+\subsubsection{The [[assert]] Keyword}
 
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{The [[assert]] Keyword} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 I consider the [[assert]] keyword of Aldor to be important and thus
 highlight it in a special way. Whenenver you change colors, [[assert]]
 should catch your eye. That was my intention.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<assert statements>>=
 '("\\<\\(assert\\)\\>\\(.*\\)"
   (1 aldor-font-lock-assert-face)
   (2 aldor-font-lock-assert-argument-face))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{The [[throw]] Keyword} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{The [[throw]] Keyword}
 
 I consider the throw keyword as something exceptional so it should
 have another face.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<throw keyword>>=
 '("\\<\\(throw\\)\\>"
   (1 aldor-font-lock-throw-face))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{The [[pretend]] Keyword} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{The [[pretend]] Keyword}
 
 Similarly one should really know what one is doing when using the
 pretend keyword. So let us give it a special face.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<pretend keyword>>=
 '("\\<\\(pretend\\)\\>"
   (1 aldor-font-lock-pretend-face))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
+\subsubsection{Highlight Brackets}
 
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Highlight Brackets} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 I also like to highlight the parentheses, braces and brackets.
-%
+
 Don't ask me why.
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
 <<highlight brackets>>=
 '("\\([][{}()]\\)"
   (1 font-lock-keyword-face))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
+\subsubsection{The [[+->]] Operator}
 
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{The [[+->]] Operator} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 I also find it useful to see the mapsto [[+->]] operator in a keyword
 face.
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
 <<mapsto [[+->]]>>=
 '("\\([+]->\\)"
   (1 font-lock-keyword-face))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Defining Categories and Extending Domains} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Defining Categories and Extending Domains}
 
 Another convention concerns categories. They should be introduced by
-the [[define]] keyword at the beginning of a line and followed by 
+the [[define]] keyword at the beginning of a line and followed by
 an identifier that starts with a capital letter.
 
 Similarly we treat extension of domains. But instead of [[define]]
@@ -1047,98 +692,60 @@ they are introduced by the [[extend]] keyword.
 Category and domain names should consist exclusively of word
 characters as defined by the syntax table, see
 Section~\ref{sec:SyntaxTable}.
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
 <<define categories and extend domains>>=
 (list (concat "^\\(define\\|extend\\)[ \t]+" id-dom)
   '(1 font-lock-keyword-face)
   '(2 font-lock-type-face))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
+\subsubsection{Defining Domains}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Defining Domains} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 By convention, in domain and package definitions the name should start
 in the first column and should start with a capital letter and
 followed exclusively by word characters as defined by the syntax
 table, see Section~\ref{sec:SyntaxTable}.
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
 <<Domain and package definitions>>=
 (list (concat "^" id-dom)
-  '(1 font-lock-type-face))	
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+  '(1 font-lock-type-face))
+@
 
+\subsubsection{Defining Functions and Constants}
 
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Defining Functions and Constants} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Functions and constants should start with a small letter as the first
 thing on the line (after some possible white space) and followed
 exclusively by word characters as defined by the syntax table, see
 Section~\ref{sec:SyntaxTable}.
-%
+
 We do not bother to highlight function names like [[*]] or [[+]].
 
 A function name should immediately be followed by an open parenthesis.
-%
+
 A constant should immediately be followed by a colon and a space.
-%
+
 By convention the [[==]] should appear on the same line. If this is
 not possible, the line should end with an open parenthesis.
-%
+
 The [[local]] keyword can optionally appear in front of the function
 or constant name.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Function and constant definitions>>=
 (list (concat "^[ \t]*\\(local\\)[ \t]+" id-fun ".*\\(==\\|($\\)")
   '(1 font-lock-keyword-face)
   '(2 font-lock-function-name-face))
 (list (concat "^[ \t]*" id-fun ".*\\(==\\|($\\)")
   '(1 font-lock-function-name-face))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
+\subsubsection{Remaining Aldor Keywords}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Remaining Aldor Keywords} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Finally, the Aldor keywords that we have not yet dealt with should be
 highlighted.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Aldor remaining keywords>>=
 (cons (concat "\\<\\(" (regexp-opt '(
-    "add"      "and"       "always"    
+    "add"      "and"       "always"
 ;   "assert"
     "break"    "but"      "catch"     "default"
 ;   "define"   -- Handled in "define CATEGORY"
@@ -1163,59 +770,15 @@ highlighted.
 ;   "to"       -- handled in [[from and to statements]]
     "try"      "where"    "while"     "with"   "yield"))  "\\)\\>")
   '(1 font-lock-keyword-face))
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Keyboard Bindings}\label{sec:KeyboardBinding} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Keyboard Bindings}\label{sec:KeyboardBinding}
 
 In [[aldor-mode]] the enter key ([[RET]]) gets special meaning. We
 define a new [[key-map]] for Aldor.
-%
+
 Pressing [[RET]] puts the cursor into the next line and indents it to
-the appropriate column. 
+the appropriate column.
 
 Pressing [[C-RET]] (control enter) starts an interactive Aldor
 interpreter in a buffer called [[*Aldor*]].
@@ -1223,28 +786,24 @@ interpreter in a buffer called [[*Aldor*]].
 Pressing [[S-RET]] (shift enter) in an [[aldor-mode]] buffer sends the
 command under the cursor to the [[*Aldor*]] buffer and executes it.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Keyboard bindings>>=
 <<aldor-newline>>
 <<keymap>>
 @
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 
 Here comes the code that is called when [[RET]] is pressed.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<aldor-newline>>=
 (defun aldor-newline ()
   "Newline for Aldor major mode."
   (interactive)
   (newline)
   (aldor-indent-new-line))
-@ %def aldor-newline 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
 The functions that are called when a certain key is pressed is defined
 through the following [[aldor-mode-map]].
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
 <<keymap>>=
 (defvar aldor-mode-map
  (let ((aldor-mode-map (make-keymap)))
@@ -1253,50 +812,29 @@ through the following [[aldor-mode-map]].
   (define-key aldor-mode-map [(control return)] 'aldor-loop)
   aldor-mode-map)
  "Keymap for Aldor major mode.")
-@ %def aldor-mode-map
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Indentation Support}\label{sec:IndentationSupport}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The idea of our indentation code is as simple as this.
 \begin{enumerate}
-\item Go to the last non-empty line that is not a special line
-  (basically a comment-only line).
-\item Compute the indentation of this line.
-\item Then scan through this line and add for any open and closing
-  bracket a certain offset amount which is described by the variables
-  below. Let's say this give a value $i$ for the indentation.
-\item If the line that should be indented is not one of the
-  special lines, i.\,e.,  
-  \begin{itemize}
-  \item an empty line,
-  \item a line started by [[++]] or [[--]],
-  \item a line with [[#]] in the first column,
-  \item a line started by a closing bracket,
-  \end{itemize}
-  then $i$ is the amount of indentation.
-\item Otherwise, we add an appropriate offset amount to $i$ and take
-  this as the indentation.
+  \item Go to the last non-empty line that is not a special line
+    (basically a comment-only line).
+  \item Compute the indentation of this line.
+  \item Then scan through this line and add for any open and closing
+    bracket a certain offset amount which is described by the variables
+    below. Let's say this give a value $i$ for the indentation.
+  \item If the line that should be indented is not one of the
+    special lines, i.\,e.,
+    \begin{itemize}
+    \item an empty line,
+    \item a line started by [[++]] or [[--]],
+    \item a line with [[#]] in the first column,
+    \item a line started by a closing bracket,
+    \end{itemize}
+    then $i$ is the amount of indentation.
+  \item Otherwise, we add an appropriate offset amount to $i$ and take
+    this as the indentation.
 \end{enumerate}
 
 At the moment we do not bother to enforce a correct pairing of opening
@@ -1307,37 +845,28 @@ First we describe customisable variables. Then some auxiliary
 functions. And, finally, a function that puts it all together to
 compute the indentation of the current line and indents this line.
 
-
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation support>>=
 <<Indentation default offsets>>
 <<Indentation auxiliaries>>
 <<Indentation computation>>
-@ 
+@
 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Indentation Variables}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 There are basically two variables that control the amount of
 indentation. One is connected to opening and closing brackets and the
 other to a treatment of special lines like comments, empty lines, and
 Aldor system commands.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation default offsets>>=
 <<Indentation open and close offsets>>
 <<Indentation special line offsets>>
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
 The following variable describes opening and closing brackets and the
 corresponding offset amount. For the closing bracket the amount will
 be automatically negated.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation open and close offsets>>=
 (defvar aldor-offset-pair-alist
   '(
@@ -1346,8 +875,7 @@ be automatically negated.
     (("{"   . "}"  ) . 8)
     )
   "Regular expressions together with corresponding offset amount.")
-@ %def aldor-offset-pair-alist
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
 The following variable describes the offset amount that should be
 added to the calculated one in order to achieve the right indentation
@@ -1357,7 +885,6 @@ Note that we have put here a value of [[-1000]] to yield a negative
 offset. Negative offsets will be truncated to 0 so that the
 corresponding line will start at the first column.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation special line offsets>>=
 (defvar aldor-special-line-offset-alist
   '(
@@ -1370,35 +897,16 @@ corresponding line will start at the first column.
     ("^[ \t]*$"          . -1000)   ;empty line
     )
   "Regular expressions for comments together with the offsets.")
-@ %def aldor-special-line-offset-alist
-%$
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Indentation Auxiliary Functions}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation auxiliaries>>=
 <<Indentation helpful offset list>>
 <<Indentation identify special and closing-bracket lines>>
 <<Indentation forward-char skipping Aldor escape character>>
 <<Indentation move the point behind the string>>
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
+@
 
 We compute this variable because it allows easier code for
 the function [[aldor-compute-next-indentation]]. It basically returns
@@ -1407,30 +915,23 @@ offset amount. The regular expressions for the closing brackets will
 also be contained in this list but with the corresponding negative
 offset amount.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation helpful offset list>>=
 (defvar aldor-offset-alist
   (let* ((alist nil) (q nil) (p (reverse aldor-offset-pair-alist)))
     (while p
-      (setq q (car p)) 
+      (setq q (car p))
       (setq p (cdr p))
       (setq alist (cons (cons (cdar q) (- (cdr q))) alist))
       (setq alist (cons (cons (caar q) (cdr q))     alist)))
     alist))
-@ %def aldor-offset-alist
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
-
+@
 
 The following functions check whether we are currently looking at a
 special line or a line starting with a closing bracket.
-%
+
 It returns a pair consisting of the regular expression that matched
 and the corresponding offset amount.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation identify special and closing-bracket lines>>=
 <<Indentation identify special lines>>
 <<Indentation identify closing-bracket lines>>
@@ -1438,157 +939,77 @@ and the corresponding offset amount.
   (let* (return-value)
     (setq return-value (aldor-looking-at-special-line))
     (if (not return-value)
-	(setq return-value (aldor-looking-at-closing-brace)))
+        (setq return-value (aldor-looking-at-closing-brace)))
     return-value))
-@ %def aldor-looking-at-special-or-closing
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
-
-
-
-
-
-
-
-
-
+@
 
 Do we look at a line that matches one of
 [[aldor-special-line-offset-alist]] at the beginning of the line.
-%
+
 If yes return the pair from this list. If no then return nil. We
 assume that point is at the beginning of the line.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation identify special lines>>=
 (defun aldor-looking-at-special-line ()
   (let* (
-	 (return-value nil)
-	 (special-line-offsets aldor-special-line-offset-alist)
-	 )
+         (return-value nil)
+         (special-line-offsets aldor-special-line-offset-alist)
+         )
     (while special-line-offsets
       (if (looking-at (caar special-line-offsets))
-	  (progn 
-	    (setq return-value (car special-line-offsets))
-	    (setq special-line-offsets nil))
-	(setq special-line-offsets (cdr special-line-offsets))))
+          (progn
+            (setq return-value (car special-line-offsets))
+            (setq special-line-offsets nil))
+        (setq special-line-offsets (cdr special-line-offsets))))
     return-value))
-@ %def aldor-looking-at-special-line
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
-
-
-
-
-
-
-
-
-
-
+@
 
 Do we look at a line that starts with a closing bracket as described
 in [[aldor-offset-pair-alist]].
-%
+
 If yes return the corresponding pair of regular expression and
 (negative) offset amount from this list. If no then return nil.
-%
+
 We assume that point is at the beginning of the line.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation identify closing-bracket lines>>=
 (defun aldor-looking-at-closing-brace ()
   (let* (
-	 (return-value nil)
-	 (p nil)
-	 (offsets aldor-offset-pair-alist))
+         (return-value nil)
+         (p nil)
+         (offsets aldor-offset-pair-alist))
     (while offsets
       (setq p (car offsets))
       (if (looking-at (concat "^[ \t]*" (cdar p)))
-	  (progn 
-	    (setq return-value (cons (cdar p) (- (cdr p))))
-	    (setq offsets nil))
-	(setq offsets (cdr offsets))))
+          (progn
+            (setq return-value (cons (cdar p) (- (cdr p))))
+            (setq offsets nil))
+        (setq offsets (cdr offsets))))
     return-value))
-@ %def aldor-looking-at-closing-brace
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@
 
 Move forward one character, but consider an underscore as a escape
 character and thus move forward two characters in this case.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation forward-char skipping Aldor escape character>>=
 (defun aldor-forward-char ()
   (if (looking-at "_") (forward-char))
   (if (not (eolp))     (forward-char)))
-@ %def aldor-forward-char
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@
 
 Move point forward at least one character. Skip strings. Be aware that
 [[_]] (underscore) is an escape character.
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
 <<Indentation move the point behind the string>>=
 (defun aldor-ignore-string ()
-  (if (looking-at "\"") 
+  (if (looking-at "\"")
       (progn
-	(forward-char)
-	(while (and (not (eolp)) (not (looking-at "\"")))
-	  (aldor-forward-char)))))
-@ %def aldor-ignore-string
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+        (forward-char)
+        (while (and (not (eolp)) (not (looking-at "\"")))
+          (aldor-forward-char)))))
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Indentation Computation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The indentation algorithm is shortly described at the beginning of
 Section~\ref{sec:IndentationSupport}.
@@ -1598,27 +1019,23 @@ indentation for the next line ([[aldor-compute-next-indentation]]) and
 the function [[aldor-indent-line]] which does the actual indentation
 of the line.
 
-
-
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indentation computation>>=
 <<Compute indentation for the next line>>
 <<skip special lines backward>>
 <<Indent line>>
 <<Indent a line after pressing RET>>
-@ 
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-Computation of the indentation for the next line is done as follows. 
-%
+Computation of the indentation for the next line is done as follows.
+
 We determine the current indentation.
-%
+
 Then we adjust the indentation for lines that start with a closing
 bracket.
-%
+
 Finally we scan through the line and adjust the indentation each time
 we find an open or closing bracket.
-%
+
 The adjusting step for lines beginning with a closing is necessary.
 Since the closing bracket will decrease the offset during the
 following scanning step, we simply add the corresponding offset amount
@@ -1626,7 +1043,6 @@ beforehand.
 
 We assume that we look at the beginning of the line.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Compute indentation for the next line>>=
 (defun aldor-compute-next-indentation ()
   (let* (indent offsets forward)
@@ -1637,83 +1053,67 @@ We assume that we look at the beginning of the line.
     (if offsets (setq indent (- indent (cdr offsets))))
 
     (if (not (aldor-looking-at-special-line)) ;we might be at line 0
-	;; scan the line and adjust indent
-	(progn 
-	  (while (not (eolp))
-	    (aldor-ignore-string)
-	    (setq offsets aldor-offset-alist)
-	    (setq forward nil)
-	    (while offsets
-	      (if (looking-at (caar offsets))
-		  (progn 
-		    (setq forward (- (length (match-data)) 1))
-		    (setq indent (+ indent (cdar offsets)))
-		    (setq offsets nil))
-		(setq offsets (cdr offsets))))
-	    (if forward
-		(forward-char forward)
-	      (aldor-forward-char)))))
+        ;; scan the line and adjust indent
+        (progn
+          (while (not (eolp))
+            (aldor-ignore-string)
+            (setq offsets aldor-offset-alist)
+            (setq forward nil)
+            (while offsets
+              (if (looking-at (caar offsets))
+                  (progn
+                    (setq forward (- (length (match-data)) 1))
+                    (setq indent (+ indent (cdar offsets)))
+                    (setq offsets nil))
+                (setq offsets (cdr offsets))))
+            (if forward
+                (forward-char forward)
+              (aldor-forward-char)))))
     indent))
-@ %def aldor-compute-next-indentation
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
+@
 
 Special lines are considered like empty lines. They do not give any
 information on the indentation. So we skip backwards until we find a
 non-special line.
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
 <<skip special lines backward>>=
 (defun aldor-skip-special-lines-backward ()
   (forward-line -1)
   (while (and (not (bobp)) (aldor-looking-at-special-line))
     (forward-line -1)))
-@ %def aldor-skip-special-lines-backward
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
-
-
-
-
+@
 
 This is the code that implements the indentation steps described at
 the beginning of Section~\ref{sec:IndentationSupport}.
 
 Note that we do not modify the indentation of the first line.
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
 <<Indent line>>=
 (defun aldor-indent-line ()
   "Indentation for Aldor major mode."
   (let* (indent i)
     (beginning-of-line)
     (if (> (point) 1)
-	(progn 
-	  (save-excursion
-	    (aldor-skip-special-lines-backward)
-	    (setq indent (aldor-compute-next-indentation)))
-	  ; We have the basis indentation.
+        (progn
+          (save-excursion
+            (aldor-skip-special-lines-backward)
+            (setq indent (aldor-compute-next-indentation)))
+          ; We have the basis indentation.
 
           ; Now it might happen that we need to indent a
-	  ; special line or a line that starts with a closing
-	  ; paren (after initial white space).
-	  (setq i (aldor-looking-at-special-or-closing))
-	  (if i (setq indent (+ indent (cdr i))))
-	  (if (> 0 indent) (setq indent 0))
-	  (indent-line-to indent)))))
-@ %def aldor-indent-line
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-
-
-
+          ; special line or a line that starts with a closing
+          ; paren (after initial white space).
+          (setq i (aldor-looking-at-special-or-closing))
+          (if i (setq indent (+ indent (cdr i))))
+          (if (> 0 indent) (setq indent 0))
+          (indent-line-to indent)))))
+@
 
 After pressing [[RET]] the cursor will be on an empty line. Thus the
 indentation would be 0. We therefore go just back to the last
 non-special line compute the indent and take it without further
 modification.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<Indent a line after pressing RET>>=
 (defun aldor-indent-new-line ()
   "Indentation after pressing RET for Aldor major mode."
@@ -1723,38 +1123,17 @@ modification.
       (setq indent (aldor-compute-next-indentation)))
     (if (> 0 indent) (setq indent 0))
     (indent-line-to indent)))
-@ %def aldor-indent-new-line
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Aldor Mode Setup}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 We set up [[aldor-mode]]. Note that we do not turn on the syntax
 highlighting immediately, but it can be done by using
 [[aldor-mode-hook]] in your Emacs init file, see
 Section~\ref{sec:ConfigurationFiles}.
 
-%CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 <<aldor-mode-setup>>=
-;; hook to be run for Aldor mode 
+;; hook to be run for Aldor mode
 (defvar aldor-mode-hook nil)
 
 ;; start Aldor mode
@@ -1774,10 +1153,8 @@ Section~\ref{sec:ConfigurationFiles}.
   (setq major-mode 'aldor-mode mode-name "Aldor")
   (run-hooks 'aldor-mode-hook)
 )
-@ %def aldor-mode-hook aldor-mode
-%TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+@
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %EMACS Local Variables:
 %EMACS mmm-noweb-code-mode: lisp-mode
 %EMACS ispell-local-dictionary: "british"
